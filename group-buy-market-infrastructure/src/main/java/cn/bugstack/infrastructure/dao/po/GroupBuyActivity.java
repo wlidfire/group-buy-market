@@ -1,11 +1,11 @@
 package cn.bugstack.infrastructure.dao.po;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 拼团活动信息实体类
@@ -31,7 +31,7 @@ public class GroupBuyActivity {
     /* 商品ID（最大长度12） */
     private String goodsId;
 
-    /* 折扣ID（对应 group_buy_discount 表，最大长度8） */
+    /* 折扣ID（最大长度8） */
     private String discountId;
 
     /* 拼团方式（0自动成团、1达成目标拼团） */
@@ -61,11 +61,9 @@ public class GroupBuyActivity {
     /* 人群标签规则范围（多选；1可见限制、2参与限制） */
     private String tagScope;
 
-    /* 创建时间，默认当前时间。格式化输出为 yyyy-MM-dd HH:mm:ss */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    /* 创建时间 */
+    private Date createTime;
 
-    /* 更新时间，默认当前时间，并在更新时自动刷新。格式化输出为 yyyy-MM-dd HH:mm:ss */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    /* 更新时间 */
+    private Date updateTime;
 }
