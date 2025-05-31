@@ -43,6 +43,12 @@
             <groupId>cn.bugstack</groupId>
             <artifactId>group-buy-market-types</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.6</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
