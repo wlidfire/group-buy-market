@@ -3,7 +3,9 @@ package cn.bugstack.types.design.framework.tree;
 import lombok.Getter;
 import lombok.Setter;
 
-
+/**
+ * 抽象策略路由类 - 根据经输入参数动态选择并执行对应的策略处理器
+ */
 public abstract class AbstractStrategyRouter<T, D, R> implements StrategyMapper<T, D, R>, StrategyHandler<T, D, R> {
 
     @Getter

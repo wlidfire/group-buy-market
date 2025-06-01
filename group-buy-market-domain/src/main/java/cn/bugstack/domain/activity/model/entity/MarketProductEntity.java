@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 营销商品实体信息
+ */
 @Data
 @Builder
 @AllArgsConstructor

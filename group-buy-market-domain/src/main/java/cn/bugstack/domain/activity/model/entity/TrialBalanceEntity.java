@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * 试算结果实体对象
+ */
 @Data
 @Builder
 @AllArgsConstructor

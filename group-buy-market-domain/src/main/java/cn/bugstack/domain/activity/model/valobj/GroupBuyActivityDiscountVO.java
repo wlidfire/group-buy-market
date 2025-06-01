@@ -1,24 +1,15 @@
-package cn.bugstack.infrastructure.dao.po;
+package cn.bugstack.domain.activity.model.valobj;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
-/**
- * 拼团活动信息实体类
- * 对应数据库表：group_buy_activity
- */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class GroupBuyActivity {
-
-    /* 自增ID */
-    private Long id;
-
+@NoArgsConstructor
+@Builder
+public class GroupBuyActivityDiscountVO {
     /* 活动ID（唯一标识） */
     private Long activityId;
 
@@ -34,7 +25,7 @@ public class GroupBuyActivity {
     private String goodsId;
 
     /* 折扣ID（最大长度8） */
-    private String discountId;
+    private GroupBuyDiscount groupBuyDiscount;
 
     /* 拼团方式（0自动成团、1达成目标拼团） */
     private Byte groupType;
@@ -63,9 +54,28 @@ public class GroupBuyActivity {
     /* 人群标签规则范围（多选；1可见限制、2参与限制） */
     private String tagScope;
 
-    /* 创建时间 */
-    private Date createTime;
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GroupBuyDiscount {
 
-    /* 更新时间 */
-    private Date updateTime;
+        /* 折扣标题（最大长度64） */
+        private String discountName;
+
+        /* 折扣描述（最大长度256） */
+        private String discountDesc;
+
+        /* 折扣类型（0:base、1:tag） */
+        private Byte discountType;
+
+        /* 营销优惠计划（ZJ:直减、MJ:满减、N元购） */
+        private String marketPlan;
+
+        /* 营销优惠表达式，用于计算优惠规则 */
+        private String marketExpr;
+
+        /* 人群标签，特定优惠限定（可为空） */
+        private String tagId;
+    }
 }
