@@ -22,7 +22,7 @@ public class IIndexGroupBuyMarketServiceTest {
         MarketProductEntity marketProductEntity = new MarketProductEntity();
         marketProductEntity.setChannel("c01");
         marketProductEntity.setUserId("xiaofuge");
-        marketProductEntity.setGoodsId("989001");
+        marketProductEntity.setGoodsId("9890001");
         marketProductEntity.setSource("s01");
 
         TrialBalanceEntity trialBalanceEntity = iIndexGroupBuyMarketService.indexMarketTrial(marketProductEntity);

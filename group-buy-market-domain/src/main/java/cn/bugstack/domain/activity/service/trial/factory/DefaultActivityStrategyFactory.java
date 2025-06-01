@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 /**
  * 策略工厂类 - 创建与活动策略相关的处理器
  * 整体作用：为策略模式中的决策树提供策略入口和上下文支持
@@ -40,8 +42,11 @@ public class DefaultActivityStrategyFactory {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DynamicContext {
-
+        // 拼团活动营销配置值对象
         private GroupBuyActivityDiscountVO groupBuyActivityDiscountVO;
+        // 商品信息
         private SkuVO skuVO;
+        //
+        private BigDecimal deductionPrice;
     }
 }
