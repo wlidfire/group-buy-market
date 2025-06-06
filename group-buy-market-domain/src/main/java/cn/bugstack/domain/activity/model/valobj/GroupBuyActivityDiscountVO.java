@@ -15,13 +15,13 @@ public class GroupBuyActivityDiscountVO {
 
     private String activityName;
 
-    /* 来源（如：APP、H5、小程序等，最大长度8） */
+    /*来源（如：APP、H5、小程序等，最大长度8）*/
     private String source;
 
-    /* 渠道（如：微信、支付宝、京东等，最大长度8） */
+    /*渠道（如：微信、支付宝、京东等，最大长度8）*/
     private String channel;
 
-    /* 商品ID（最大长度12） */
+    /* 商品ID（最大长度12）*/
     private String goodsId;
 
     /* 折扣ID（最大长度8） */

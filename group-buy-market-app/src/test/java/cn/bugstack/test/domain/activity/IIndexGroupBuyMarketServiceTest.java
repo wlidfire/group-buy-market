@@ -29,4 +29,17 @@ public class IIndexGroupBuyMarketServiceTest {
         log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
+
+    @Test
+    public void testError() throws Exception {
+        MarketProductEntity marketProductEntity = new MarketProductEntity();
+        marketProductEntity.setChannel("c01");
+        marketProductEntity.setUserId("xiaofuge");
+        marketProductEntity.setGoodsId("9890002");
+        marketProductEntity.setSource("s01");
+
+        TrialBalanceEntity trialBalanceEntity = iIndexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
+        log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
+        log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
+    }
 }
