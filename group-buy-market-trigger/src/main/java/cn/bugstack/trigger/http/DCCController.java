@@ -23,15 +23,18 @@ public class DCCController implements IDCCService {
 
     /**
      * 动态值变更
-     * <p>
+     *
      * curl http://127.0.0.1:8091/api/v1/gbm/dcc/update_config?key=downgradeSwitch&value=1
      * curl http://127.0.0.1:8091/api/v1/gbm/dcc/update_config?key=cutRange&value=0
+     *
+     * value = "update_config"：指定该方法相应的URL路径
+     * method = RequestMethod.GET：限定该方法只能接受GET方法的请求
      */
     @RequestMapping(value = "update_config", method = RequestMethod.GET)
     @Override
     public Response<Boolean> updateConfig(String key, String value) {
         try {
-
+            //发布到Redis的主题通道中，用于通知其他订阅该主题的服务进行相应的配置更新操作
             dccTopic.publish(key + "," + value);
 
             return Response.<Boolean>builder()

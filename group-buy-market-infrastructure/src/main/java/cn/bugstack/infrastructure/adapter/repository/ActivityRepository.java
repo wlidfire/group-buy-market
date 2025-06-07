@@ -14,6 +14,11 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 仓储接口实现类 - 存储与活动相关的业务数据
+ * 面向活动领域模型的数据访问层抽象
+ * <<封装了对底层数据库的操作>>
+ */
 @Repository
 public class ActivityRepository implements IActivityRepository {
 
