@@ -7,6 +7,7 @@ import cn.bugstack.domain.activity.model.valobj.SCSkuActivityVO;
 import cn.bugstack.domain.activity.model.valobj.SkuVO;
 import cn.bugstack.infrastructure.dao.*;
 import cn.bugstack.infrastructure.dao.po.*;
+import cn.bugstack.infrastructure.dcc.DCCService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +31,9 @@ public class ActivityRepository implements IActivityRepository {
 
     @Resource
     private ICrowdTagsDetailDao crowdTagsDetailDao;
+
+    @Resource
+    private DCCService dccService;
 
     @Override
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
@@ -100,5 +104,15 @@ public class ActivityRepository implements IActivityRepository {
     public boolean isTagCrowdRange(String tagId, String userId) {
         CrowdTagsDetail crowdTagsDetail = crowdTagsDetailDao.isTagCrowdRange(tagId, userId);
         return crowdTagsDetail != null;
+    }
+
+    @Override
+    public boolean downgradeSwitch() {
+        return dccService.isDowngradeSwitch();
+    }
+
+    @Override
+    public boolean cutRange(String userId) {
+        return dccService.isCutRange(userId);
     }
 }
