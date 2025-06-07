@@ -15,31 +15,46 @@ import javax.annotation.Resource;
 public class IIndexGroupBuyMarketServiceTest {
 
     @Resource
-    private IIndexGroupBuyMarketService iIndexGroupBuyMarketService;
+    private IIndexGroupBuyMarketService indexGroupBuyMarketService;
 
+    /**
+     * 测试人群标签功能的时候，可以进入 ITagServiceTest#test_tag_job 执行人群写入
+     */
     @Test
-    public void test() throws Exception {
+    public void test_indexMarketTrial() throws Exception {
         MarketProductEntity marketProductEntity = new MarketProductEntity();
-        marketProductEntity.setChannel("c01");
         marketProductEntity.setUserId("xiaofuge");
-        marketProductEntity.setGoodsId("9890001");
         marketProductEntity.setSource("s01");
-
-        TrialBalanceEntity trialBalanceEntity = iIndexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
+        marketProductEntity.setChannel("c01");
+        marketProductEntity.setGoodsId("9890001");
+        TrialBalanceEntity trialBalanceEntity = indexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
         log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
 
     @Test
-    public void testError() throws Exception {
+    public void test_indexMarketTrial_Error() throws Exception {
         MarketProductEntity marketProductEntity = new MarketProductEntity();
         marketProductEntity.setChannel("c01");
         marketProductEntity.setUserId("xiaofuge");
         marketProductEntity.setGoodsId("9890002");
         marketProductEntity.setSource("s01");
 
-        TrialBalanceEntity trialBalanceEntity = iIndexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
+        TrialBalanceEntity trialBalanceEntity = indexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
         log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
+
+    @Test
+    public void test_indexMarketTrial_no_tag() throws Exception {
+        MarketProductEntity marketProductEntity = new MarketProductEntity();
+        marketProductEntity.setUserId("dacihua");
+        marketProductEntity.setSource("s01");
+        marketProductEntity.setChannel("c01");
+        marketProductEntity.setGoodsId("9890001");
+        TrialBalanceEntity trialBalanceEntity = indexGroupBuyMarketService.indexMarketTrial(marketProductEntity);
+        log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
+        log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
+    }
+
 }

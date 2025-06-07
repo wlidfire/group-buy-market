@@ -1,9 +1,12 @@
 package cn.bugstack.domain.activity.model.valobj;
 
+import cn.bugstack.types.common.Constants;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -53,6 +56,31 @@ public class GroupBuyActivityDiscountVO {
 
     /* 人群标签规则范围（多选；1可见限制、2参与限制） */
     private String tagScope;
+
+    /**
+     * 可见限制
+     * 只要存在这样一个值，那么首次获得的默认值就是 false
+     */
+    public boolean isVisible() {
+        String[] split = this.tagScope.split(Constants.SPLIT);
+        if (split.length>0 && Objects.equals(split[0], "1") && StringUtils.isNotBlank(split[0])) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 参与限制
+     * 只要存在这样一个值，那么首次获得的默认值就是 false
+     */
+    public boolean isEnable() {
+        String[] split = this.tagScope.split(Constants.SPLIT);
+        if (split.length == 2 && Objects.equals(split[1], "2") && StringUtils.isNotBlank(split[1])) {
+            return false;
+        }
+        return true;
+    }
+
 
     @Getter
     @Builder

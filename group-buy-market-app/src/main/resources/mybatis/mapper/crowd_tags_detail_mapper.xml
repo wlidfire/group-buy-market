@@ -15,4 +15,10 @@
         values (#{tagId}, #{userId}, now(), now())
     </insert>
 
+    <select id="isTagCrowdRange" resultMap="dataMap">
+        select id, tag_id, user_id, create_time, update_time
+        from crowd_tags_detail
+        where tag_id = #{tagId} and user_id = #{userId}
+    </select>
+
 </mapper>

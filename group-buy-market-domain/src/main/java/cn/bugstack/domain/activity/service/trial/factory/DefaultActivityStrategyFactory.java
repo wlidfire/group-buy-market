@@ -6,6 +6,7 @@ import cn.bugstack.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import cn.bugstack.domain.activity.model.valobj.SkuVO;
 import cn.bugstack.domain.activity.service.trial.node.RootNode;
 import cn.bugstack.types.design.framework.tree.StrategyHandler;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,5 +49,9 @@ public class DefaultActivityStrategyFactory {
         private SkuVO skuVO;
         //
         private BigDecimal deductionPrice;
+        //
+        private Boolean visible;
+        //
+        private Boolean enable;
     }
 }

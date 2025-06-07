@@ -5,14 +5,8 @@ import cn.bugstack.domain.activity.model.valobj.DiscountTypeEnum;
 import cn.bugstack.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import cn.bugstack.domain.activity.model.valobj.SCSkuActivityVO;
 import cn.bugstack.domain.activity.model.valobj.SkuVO;
-import cn.bugstack.infrastructure.dao.IGroupBuyActivityDao;
-import cn.bugstack.infrastructure.dao.IGroupBuyDiscountDao;
-import cn.bugstack.infrastructure.dao.ISCSkuActivityDao;
-import cn.bugstack.infrastructure.dao.ISkuDao;
-import cn.bugstack.infrastructure.dao.po.GroupBuyActivity;
-import cn.bugstack.infrastructure.dao.po.GroupBuyDiscount;
-import cn.bugstack.infrastructure.dao.po.SCSkuActivity;
-import cn.bugstack.infrastructure.dao.po.Sku;
+import cn.bugstack.infrastructure.dao.*;
+import cn.bugstack.infrastructure.dao.po.*;
 import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +27,9 @@ public class ActivityRepository implements IActivityRepository {
 
     @Resource
     private ISCSkuActivityDao skuActivityDao;
+
+    @Resource
+    private ICrowdTagsDetailDao crowdTagsDetailDao;
 
     @Override
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
@@ -97,5 +94,11 @@ public class ActivityRepository implements IActivityRepository {
                 .activityId(scSkuActivity.getActivityId())
                 .channel(scSkuActivity.getChannel())
                 .build();
+    }
+
+    @Override
+    public boolean isTagCrowdRange(String tagId, String userId) {
+        CrowdTagsDetail crowdTagsDetail = crowdTagsDetailDao.isTagCrowdRange(tagId, userId);
+        return crowdTagsDetail != null;
     }
 }

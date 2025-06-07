@@ -59,7 +59,6 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
 
         GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = dynamicContext.getGroupBuyActivityDiscountVO();
         if (null == groupBuyActivityDiscountVO) {
-            System.out.println("null == groupBuyActivityDiscountVO");
             return router(requestParameter, dynamicContext);
         }
 

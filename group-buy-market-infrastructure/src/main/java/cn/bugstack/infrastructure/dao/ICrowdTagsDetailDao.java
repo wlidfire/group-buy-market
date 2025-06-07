@@ -13,4 +13,5 @@ public interface ICrowdTagsDetailDao {
 
     void addCrowdTagsUserId(CrowdTagsDetail crowdTagsDetailReq);
 
+    CrowdTagsDetail isTagCrowdRange(String tagId, String userId);
 }

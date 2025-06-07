@@ -22,4 +22,6 @@ public abstract class AbstractGroupBuyMarketSupport<MarketProductEntity, Dynamic
     protected void multiThread(cn.bugstack.domain.activity.model.entity.MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
         //缺省的方法
     }
+
+
 }
