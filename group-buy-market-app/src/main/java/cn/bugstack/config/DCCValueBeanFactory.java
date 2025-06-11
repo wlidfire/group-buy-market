@@ -51,8 +51,10 @@ public class DCCValueBeanFactory implements BeanPostProcessor {
      * @return 初始化后的 RTopic 对象
      *
      * @Bean("dccTopic")：
-     *  - 配置类实例化后，spring会调用此方法来创建并注册名为 dccTopic 的 RTopic Bean
-     *  - Bean初始化后，执行 postProcessAfterinitialization 方法
+     *  - 由于 DCCValueBeanFactory 使用了 @Configuration 注解，
+     *    Spring 在启动时会识别其为配置类，并创建其实例。
+     *    此时会通过构造函数注入 RedissonClient
+     *  - 配置类实例化后，spring会立即调用此方法来创建并注册名为 dccTopic 的 RTopic Bean
      *  - 该方法会对所有带有 @DDCValue 注解的字段进行处理，从 Redis 中读取配置值并反射赋值给对应的字段
      *  - 同时将这些 Bean 存储到 dccObject 中，一遍后续接收到 Redis 消息时能够动态更新字段值
      */
@@ -63,26 +65,39 @@ public class DCCValueBeanFactory implements BeanPostProcessor {
         //当其他服务发布配置更新到 Redis 的 group_buy_market_desc 主题时，监听器会被触发
         //更新逻辑通过反射修改存储在 dccObject 中对应 Bean 的字段值，实现配置的热更新
         topic.addListener(String.class, (charSequence, s) -> {
+            /*
+            总流程概述：
+                1. 接收 s，通过 s 获取 key 和 value
+                2.
+             */
+            // 获取属性名和值
             String[] split = s.split(Constants.SPLIT);
             String attribute = split[0];
             String key = BASE_CONFIG_PATH + attribute;
             String value = split[1];
 
+            // 获取Redis中的bucket对象
             RBucket<Object> bucket = redissonClient.getBucket(key);
+            // 检查bucket是否存在
             boolean exists = bucket.isExists();
             if (!exists) return;
 
+            // 将从 Redis 消息中解析出的新配置值 value 写入到 Redis
             bucket.set(value);
 
+            // 从DCC中获取对象 objectBean
+            // dccObject.get(key)：获取本地 JVM 中的 Bean 实例
             Object objectBean = dccObject.get(key);
             if (null == objectBean) return;
 
+            // 获取对象的类，如果对象是AOP代理，则获取目标类
             Class<?> objectBeanClass = objectBean.getClass();
             if (AopUtils.isAopProxy(objectBeanClass)) {
                 objectBeanClass = AopUtils.getTargetClass(objectBean);
             }
 
             try {
+                // 获取对象中的属性，并设置其值
                 Field field = objectBeanClass.getDeclaredField(attribute);
                 field.setAccessible(true);
                 field.set(objectBean, value);
@@ -97,6 +112,8 @@ public class DCCValueBeanFactory implements BeanPostProcessor {
 
     /**
      * 扫描所有的 Bean 对象，之后检查哪个类的属性加有 @DCCValue 注解，检测到后进行管理操作
+     * 在 Bean 初始化完成后触发
+     *
      * @param bean 实例化的 Bean 对象
      * @param beanName Bean 的名称
      * @return 处理后的 Bean 对象
@@ -115,12 +132,13 @@ public class DCCValueBeanFactory implements BeanPostProcessor {
 
         Field[] fields = targetBeanClass.getDeclaredFields();
         for (Field field : fields) {
+            //field.isAnnotationPresent(DCCValue.class)：只有被 @DCCValue 注解修饰的字段才会参与动态配置注入流程
             if (!field.isAnnotationPresent(DCCValue.class)) {
                 continue;
             }
 
+            //getAnnotation(DCCValue.class)：通过反射获取该字段上标注的 @DCCValue 注解
             DCCValue dccValue = field.getAnnotation(DCCValue.class);
-
             String value = dccValue.value();
             if (StringUtils.isBlank(value)) {
                 throw new RuntimeException("...");

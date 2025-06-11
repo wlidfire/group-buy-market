@@ -57,4 +57,5 @@ public class IIndexGroupBuyMarketServiceTest {
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
 
+
 }

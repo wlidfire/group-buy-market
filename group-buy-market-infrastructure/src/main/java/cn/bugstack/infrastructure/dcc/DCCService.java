@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DCCService {
 
+    // 降级开关 0关闭，1开启
     @DCCValue("downGradeSwitch:0")
     private String downGradeSwitch;
 
+    // 切量范围
     @DCCValue("cutRange:100")
     private String cutRange;
 

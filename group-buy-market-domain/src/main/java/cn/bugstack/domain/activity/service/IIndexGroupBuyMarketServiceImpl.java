@@ -18,11 +18,18 @@ public class IIndexGroupBuyMarketServiceImpl implements IIndexGroupBuyMarketServ
      * 首页市场试算
      */
     @Override
-    public TrialBalanceEntity indexMarketTrial(MarketProductEntity marketProductEntity) throws Exception {
+    public TrialBalanceEntity indexMarketTrial(MarketProductEntity marketProductEntity) {
         //获取策略处理器
         StrategyHandler<MarketProductEntity, DefaultActivityStrategyFactory.DynamicContext, TrialBalanceEntity> strategyHandler = defaultActivityStrategyFactory.strategyHandler();
         //获取试算结果 - trialBalanceEntity为试算结果实体
-        TrialBalanceEntity trialBalanceEntity = strategyHandler.apply(marketProductEntity, new DefaultActivityStrategyFactory.DynamicContext());
+        TrialBalanceEntity trialBalanceEntity = null;
+        DefaultActivityStrategyFactory.DynamicContext dynamicContext= new DefaultActivityStrategyFactory.DynamicContext();
+        try {
+            trialBalanceEntity = strategyHandler.apply(marketProductEntity, dynamicContext);
+            trialBalanceEntity.setGroupBuyActivityDiscountVO(dynamicContext.getGroupBuyActivityDiscountVO());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         //返回试算结果
         return trialBalanceEntity;
     }

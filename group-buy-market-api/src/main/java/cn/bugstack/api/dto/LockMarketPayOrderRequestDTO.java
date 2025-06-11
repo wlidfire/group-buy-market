@@ -1,27 +1,21 @@
-package cn.bugstack.domain.activity.model.entity;
+package cn.bugstack.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 营销商品实体信息
- */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class MarketProductEntity {
+@AllArgsConstructor
+public class LockMarketPayOrderRequestDTO {
 
-    /** 用户ID */
     private String userId;
-    /** 商品ID */
-    private String goodsId;
-    /** 渠道 */
-    private String source;
-    /** 来源 */
-    private String channel;
-
+    private String teamId;
     private Long activityId;
+    private String goodsId;
+    private String source;
+    private String channel;
+    private String outTradeNo;
 }

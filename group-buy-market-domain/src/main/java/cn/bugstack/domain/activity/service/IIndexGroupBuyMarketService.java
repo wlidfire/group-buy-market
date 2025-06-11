@@ -5,5 +5,5 @@ import cn.bugstack.domain.activity.model.entity.TrialBalanceEntity;
 
 public interface IIndexGroupBuyMarketService {
 
-    TrialBalanceEntity indexMarketTrial(MarketProductEntity marketProductEntity) throws  Exception;
+    TrialBalanceEntity indexMarketTrial(MarketProductEntity marketProductEntity);
 }
