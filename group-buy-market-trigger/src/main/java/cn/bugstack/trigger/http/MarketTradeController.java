@@ -19,9 +19,7 @@ import cn.bugstack.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -38,8 +36,9 @@ public class MarketTradeController implements IMarketTradeService {
     @Resource
     private IIndexGroupBuyMarketService indexGroupBuyMarketService;
 
+    @RequestMapping(value = "lock_market_pay_order", method = RequestMethod.POST)
     @Override
-    public Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO) {
+    public Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(@RequestBody LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO) {
         try {
             // 参数
             String userId = lockMarketPayOrderRequestDTO.getUserId();
@@ -118,6 +117,7 @@ public class MarketTradeController implements IMarketTradeService {
                             .originalPrice(trialBalanceEntity.getOriginalPrice())
                             .deductionPrice(trialBalanceEntity.getDeductionPrice())
                             .outTradeNo(outTradeNo)
+                            .payPrice(trialBalanceEntity.getPayPrice())
                             .build());
 
             log.info("交易锁单记录(新):{} marketPayOrderEntity:{}", userId, JSON.toJSONString(marketPayOrderEntity));

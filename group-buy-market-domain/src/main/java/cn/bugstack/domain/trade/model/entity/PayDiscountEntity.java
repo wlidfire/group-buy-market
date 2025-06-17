@@ -18,5 +18,6 @@ public class PayDiscountEntity {
     private String goodsName;
     private BigDecimal originalPrice;
     private BigDecimal deductionPrice;
+    private BigDecimal payPrice;
     private String outTradeNo;
 }

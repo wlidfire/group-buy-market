@@ -47,8 +47,10 @@ public class DefaultActivityStrategyFactory {
         private GroupBuyActivityDiscountVO groupBuyActivityDiscountVO;
         // 商品信息
         private SkuVO skuVO;
-        //
+        // 优惠了多少钱
         private BigDecimal deductionPrice;
+        // 支付金额
+        private BigDecimal payPrice;
         //
         private Boolean visible;
         //
