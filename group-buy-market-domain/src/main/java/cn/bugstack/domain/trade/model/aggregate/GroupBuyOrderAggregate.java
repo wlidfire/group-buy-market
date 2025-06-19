@@ -20,5 +20,6 @@ public class GroupBuyOrderAggregate {
     private PayActivityEntity payActivityEntity;
     /** 支付优惠实体对象 */
     private PayDiscountEntity payDiscountEntity;
-
+    /** 参与次数限定 */
+    private Integer userTakeOrderCount;
 }

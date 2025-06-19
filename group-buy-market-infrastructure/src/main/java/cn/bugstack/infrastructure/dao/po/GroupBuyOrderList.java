@@ -42,6 +42,8 @@ public class GroupBuyOrderList {
     private Integer status;
     /**  */
     private String outTradeNo;
+
+    private String bizId;
     /** 外部交易单号-确保外部调用唯一幂等 */
     private Date createTime;
     /** 创建时间 */

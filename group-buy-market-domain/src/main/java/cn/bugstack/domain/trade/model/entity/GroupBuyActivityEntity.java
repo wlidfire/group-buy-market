@@ -1,23 +1,18 @@
-package cn.bugstack.infrastructure.dao.po;
+package cn.bugstack.domain.trade.model.entity;
 
+import cn.bugstack.types.enums.ActivityStatusEnumVO;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
-/**
- * 拼团活动信息实体类
- * 对应数据库表：group_buy_activity
- */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupBuyActivity {
-
-    /* 自增ID */
-    private Long id;
+public class GroupBuyActivityEntity {
 
     /* 活动ID（唯一标识） */
     private Long activityId;
@@ -49,7 +44,7 @@ public class GroupBuyActivity {
     private Integer validTime;
 
     /* 活动状态（0创建、1生效、2过期、3废弃） */
-    private Integer status;
+    private ActivityStatusEnumVO status;
 
     /* 活动开始时间，默认当前时间 */
     private Date startTime;
@@ -63,9 +58,5 @@ public class GroupBuyActivity {
     /* 人群标签规则范围（多选；1可见限制、2参与限制） */
     private String tagScope;
 
-    /* 创建时间 */
-    private Date createTime;
 
-    /* 更新时间 */
-    private Date updateTime;
 }

@@ -31,7 +31,7 @@ public class GroupBuyActivityDiscountVO {
     private GroupBuyDiscount groupBuyDiscount;
 
     /* 拼团方式（0自动成团、1达成目标拼团） */
-    private Byte groupType;
+    private Integer groupType;
 
     /* 拼团次数限制，默认值1 */
     private Integer takeLimitCount;
@@ -43,7 +43,7 @@ public class GroupBuyActivityDiscountVO {
     private Integer validTime;
 
     /* 活动状态（0创建、1生效、2过期、3废弃） */
-    private Byte status;
+    private Integer status;
 
     /* 活动开始时间，默认当前时间 */
     private Date startTime;
