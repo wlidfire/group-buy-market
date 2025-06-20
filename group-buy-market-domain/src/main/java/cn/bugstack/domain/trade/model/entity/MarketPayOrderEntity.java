@@ -17,5 +17,5 @@ public class MarketPayOrderEntity {
     private String orderId;
     private BigDecimal deductionPrice;
     private TradeOrderStatusEnumVO tradeOrderStatusEnumVO;
-
+    private String teamId;
 }

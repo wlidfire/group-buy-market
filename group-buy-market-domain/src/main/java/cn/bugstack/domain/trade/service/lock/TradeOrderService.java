@@ -1,10 +1,11 @@
-package cn.bugstack.domain.trade.service;
+package cn.bugstack.domain.trade.service.lock;
 
 import cn.bugstack.domain.trade.adapter.repository.ITradeRepository;
 import cn.bugstack.domain.trade.model.aggregate.GroupBuyOrderAggregate;
 import cn.bugstack.domain.trade.model.entity.*;
 import cn.bugstack.domain.trade.model.valobj.GroupBuyProgressVO;
-import cn.bugstack.domain.trade.service.factory.TradeRuleFilterFactory;
+import cn.bugstack.domain.trade.service.ITradeOrderService;
+import cn.bugstack.domain.trade.service.lock.factory.TradeRuleFilterFactory;
 import cn.bugstack.types.design.framework.link.model2.chain.BusinessLinkedList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

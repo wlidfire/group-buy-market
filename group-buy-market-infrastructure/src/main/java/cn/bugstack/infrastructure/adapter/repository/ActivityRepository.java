@@ -94,7 +94,7 @@ public class ActivityRepository implements IActivityRepository {
         scSkuActivityReq.setSource(source);
         scSkuActivityReq.setChannel(channel);
         scSkuActivityReq.setGoodsId(goodsId);
-        SCSkuActivity scSkuActivity = skuActivityDao.querySCSkuActivityBySCGooodsId(scSkuActivityReq);
+        SCSkuActivity scSkuActivity = skuActivityDao.querySCSkuActivityBySCGoodsId(scSkuActivityReq);
         if (null == scSkuActivity) return null;
 
         return SCSkuActivityVO.builder()
