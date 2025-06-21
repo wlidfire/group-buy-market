@@ -38,10 +38,10 @@ public class GroupBuyOrder {
     private int lockCount;
     /** 状态（0-拼单中、1-完成、2-失败） */
     private String status;
-    /**  */
-    private String outTradeNo;
-    /**  */
-    private String bizId;
+    /** 拼团开始时间 */
+    private Date validStartTime;
+    /** 拼团结束时间 */
+    private Date validEndTime;
     /** 创建时间 */
     private Date createTime;
     /** 更新时间 */

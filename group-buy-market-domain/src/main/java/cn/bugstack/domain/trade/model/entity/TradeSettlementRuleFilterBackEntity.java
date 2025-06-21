@@ -11,11 +11,15 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradePaySettlementEntity {
-    private String source;
-    private String channel;
-    private String userId;
+public class TradeSettlementRuleFilterBackEntity {
+
     private String teamId;
     private Long activityId;
-    private String outTradeNo;
+    private Integer targetCount;
+    private Integer completeCount;
+    private Integer lockCount;
+    private Integer status;
+    private Date validStartTime;
+    private Date validEndTime;
+
 }

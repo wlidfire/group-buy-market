@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,4 +16,8 @@ public class GroupBuyTeamEntity {
     private String teamId;
     private Integer targetCount;
     private Integer completeCount;
+    private Date validStartTime;
+    private Date validEndTime;
+    private Integer lockCount;
+    private Integer status;
 }

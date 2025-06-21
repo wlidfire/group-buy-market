@@ -18,4 +18,5 @@ public class PayActivityEntity {
     private Date startTime;
     private Date endTime;
     private Integer targetCount;
+    private Date validTime;
 }

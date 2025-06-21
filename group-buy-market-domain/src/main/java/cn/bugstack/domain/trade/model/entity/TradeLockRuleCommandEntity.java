@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradeRuleCommandEntity {
+public class TradeLockRuleCommandEntity {
 
     private String userId;
     private Long activeId;

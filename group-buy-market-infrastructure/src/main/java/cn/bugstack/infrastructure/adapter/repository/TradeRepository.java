@@ -14,6 +14,7 @@ import cn.bugstack.infrastructure.dao.po.GroupBuyActivity;
 import cn.bugstack.infrastructure.dao.po.GroupBuyOrder;
 import cn.bugstack.infrastructure.dao.po.GroupBuyOrderList;
 import cn.bugstack.infrastructure.dao.po.NotifyTask;
+import cn.bugstack.infrastructure.dcc.DCCService;
 import cn.bugstack.types.common.Constants;
 import cn.bugstack.types.enums.ActivityStatusEnumVO;
 import cn.bugstack.types.enums.ResponseCode;
@@ -42,6 +43,9 @@ public class TradeRepository implements ITradeRepository {
 
     @Resource
     private INotifyTaskDao notifyTaskDao;
+
+    @Resource
+    private DCCService dccService;
 
     @Override
     public MarketPayOrderEntity queryMarketPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
@@ -185,6 +189,7 @@ public class TradeRepository implements ITradeRepository {
                 .activityId(groupBuyOrderRes.getActivityId())
                 .completeCount(groupBuyOrderRes.getCompleteCount())
                 .targetCount(groupBuyOrderRes.getTargetCount())
+                .validEndTime(groupBuyOrderRes.getValidEndTime())
                 .build();
     }
 
@@ -199,6 +204,7 @@ public class TradeRepository implements ITradeRepository {
         GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
         groupBuyOrderListReq.setUserId(userEntity.getUserId());
         groupBuyOrderListReq.setOutTradeNo(tradePaySuccessEntity.getOutTradeNo());
+        groupBuyOrderListReq.setOutTradeTime(tradePaySuccessEntity.getOutTradeTime());
         int updateOrderListStatusCount = groupBuyOrderListDao.updateOrderStatus2COMPLETE(groupBuyOrderListReq);
         if (1 != updateOrderListStatusCount) {
             throw new AppException(ResponseCode.E0005);
@@ -234,6 +240,11 @@ public class TradeRepository implements ITradeRepository {
 
             notifyTaskDao.insert(notifyTask);
         }
+    }
+
+    @Override
+    public boolean isSCBlackIntercept(String source, String channel) {
+        return dccService.isSCBlackIntercept(source, channel);
     }
 
 

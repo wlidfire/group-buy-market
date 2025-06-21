@@ -40,9 +40,10 @@ public class GroupBuyOrderList {
     private BigDecimal deductionPrice;
     /** 状态；0初始锁定、1消费完成 */
     private Integer status;
-    /**  */
+    /** 外部交易单号 */
     private String outTradeNo;
-
+    /** 外部交易时间 */
+    private Date outTradeTime;
     private String bizId;
     /** 外部交易单号-确保外部调用唯一幂等 */
     private Date createTime;
