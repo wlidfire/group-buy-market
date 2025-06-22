@@ -26,15 +26,14 @@ public class TradeSettlementOrderServiceTest {
 
     /**
      * 订单结算
-     * @throws Exception
      */
     @Test
     public void test_settlementMarketPayOrder() throws Exception {
         TradePaySuccessEntity tradePaySuccessEntity = new TradePaySuccessEntity();
         tradePaySuccessEntity.setSource("s01");
         tradePaySuccessEntity.setChannel("c01");
-        tradePaySuccessEntity.setUserId("xfg01");
-        tradePaySuccessEntity.setOutTradeNo("147634202841");
+        tradePaySuccessEntity.setUserId("xfg03");
+        tradePaySuccessEntity.setOutTradeNo("372491532240");
         tradePaySuccessEntity.setOutTradeTime(new Date());
         TradePaySettlementEntity tradePaySettlementEntity = tradeSettlementOrderService.settlementMarketPayOrder(tradePaySuccessEntity);
         log.info("请求参数:{}", JSON.toJSONString(tradePaySuccessEntity));

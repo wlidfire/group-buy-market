@@ -20,4 +20,5 @@ public class GroupBuyTeamEntity {
     private Date validEndTime;
     private Integer lockCount;
     private Integer status;
+    private String notifyUrl;
 }

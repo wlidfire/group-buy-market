@@ -20,5 +20,5 @@ public class TradePaySuccessEntity {
     private Integer status;
     private String source;
     private String channel;
-
+    private String notifyUrl;
 }

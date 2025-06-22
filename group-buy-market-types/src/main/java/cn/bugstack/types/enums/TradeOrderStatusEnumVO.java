@@ -1,4 +1,4 @@
-package cn.bugstack.domain.trade.model.valobj;
+package cn.bugstack.types.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

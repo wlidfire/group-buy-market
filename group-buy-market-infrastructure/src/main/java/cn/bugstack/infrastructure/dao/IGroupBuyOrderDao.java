@@ -14,9 +14,9 @@ public interface IGroupBuyOrderDao {
 
     void insert(GroupBuyOrder groupBuyOrder);
 
-    int updateOrderStatus2COMPLETE(String teamId);
-
     int updateAddCompleteCount(String teamId);
 
     GroupBuyOrder queryGroupBuyTeamByTeamId(String teamId);
+
+    int updateOrderStatus2COMPLETE(String teamId);
 }

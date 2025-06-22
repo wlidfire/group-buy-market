@@ -18,4 +18,5 @@ public class LockMarketPayOrderRequestDTO {
     private String source;
     private String channel;
     private String outTradeNo;
+    private String notifyUrl;
 }

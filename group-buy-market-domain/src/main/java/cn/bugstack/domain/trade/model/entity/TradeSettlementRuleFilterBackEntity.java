@@ -21,5 +21,5 @@ public class TradeSettlementRuleFilterBackEntity {
     private Integer status;
     private Date validStartTime;
     private Date validEndTime;
-
+    private String notifyUrl;
 }

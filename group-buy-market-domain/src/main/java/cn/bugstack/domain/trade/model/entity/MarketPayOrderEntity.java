@@ -1,6 +1,6 @@
 package cn.bugstack.domain.trade.model.entity;
 
-import cn.bugstack.domain.trade.model.valobj.TradeOrderStatusEnumVO;
+import cn.bugstack.types.enums.TradeOrderStatusEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
