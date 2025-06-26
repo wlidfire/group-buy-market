@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>手写MyBatis：渐进式源码实践 - 拼多多</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* 登录状态栏 */
+        .login-status-bar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .login-status-bar a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .login-status-bar a:hover {
+            text-decoration: underline;
+        }
+
+        /* 轮播图样式 */
+        .swiper-container {
+            width: 100%;
+            height: 375px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        .swiper-slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .swiper-slide.active {
+            opacity: 1;
+        }
+
+        .swiper-slide img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .swiper-indicators {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .swiper-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .swiper-indicator.active {
+            background-color: #fff;
+            transform: scale(1.2);
+        }
+
+        /* 商品信息区域 */
+        .product-info {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        .promotion-tag {
+            display: inline-block;
+            background: linear-gradient(90deg, #ff2c2c, #ff5e00);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .promotion-info {
+            color: #ff5000;
+            font-size: 14px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .promotion-info i {
+            margin-right: 5px;
+        }
+
+        /* 拼单区域 */
+        .group-buying {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(180deg, #ff2c2c, #ff9000);
+            border-radius: 2px;
+        }
+
+        .group-user {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .group-user:last-child {
+            border-bottom: none;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .group-status {
+            color: #ff5000;
+            font-size: 13px;
+        }
+
+        .countdown {
+            display: inline-flex;
+            background: #fff0e6;
+            color: #ff5000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        .group-btn {
+            background: linear-gradient(90deg, #ff2c2c, #ff9000);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 价格区域 */
+        .price-section {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-info {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .current-price {
+            color: #ff5000;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .current-price::before {
+            content: "¥";
+            font-size: 18px;
+        }
+
+        .original-price {
+            color: #999;
+            font-size: 14px;
+            text-decoration: line-through;
+            margin-left: 8px;
+            margin-bottom: 2px;
+        }
+
+        .original-price::before {
+            content: "¥";
+        }
+
+        .sold-count {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* 购买按钮区域 */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            display: flex;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .action-btn i {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .buy-btn {
+            flex: 2;
+            display: flex;
+        }
+
+        .solo-buy {
+            flex: 1;
+            background: linear-gradient(90deg, #ff9000, #ff5000);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .group-buy {
+            flex: 1;
+            background: linear-gradient(90deg, #ff2c2c, #ff5000);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 底部安全区域 */
+        .safe-area {
+            height: env(safe-area-inset-bottom);
+            background: white;
+        }
+
+        /* 通知提示 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        /* 支付弹窗样式 */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .payment-modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: cardIn 0.5s ease-out;
+        }
+
+        @keyframes cardIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .payment-header-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: linear-gradient(90deg, #ff9000, #ff5000);
+            color: white;
+        }
+
+        .payment-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
+            margin: 0 auto 10px;
+        }
+
+        .payment-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .payment-amount {
+            font-size: 36px;
+            font-weight: 800;
+            margin-top: 15px;
+        }
+
+        .payment-amount::before {
+            content: "¥";
+            font-size: 28px;
+        }
+
+        /* 二维码区域 */
+        .qrcode-section {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .qrcode-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto;
+            background: #f8f8f8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .qrcode-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: white;
+            padding: 15px;
+        }
+
+        .qrcode-container::after {
+            #content: "拼多多支付";
+            position: absolute;
+            bottom: 15px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .payment-instruction {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: #ff5000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* 支付按钮区域 */
+        .payment-actions {
+            display: flex;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 20px;
+        }
+
+        .payment-btn {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn {
+            color: #666;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .cancel-btn:active {
+            background: #f9f9f9;
+        }
+
+        .confirm-btn {
+            color: #ff5000;
+        }
+
+        .confirm-btn:active {
+            background: #fff8f5;
+        }
+
+        /* 支付倒计时 */
+        .countdown-container {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .countdown-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .payment-countdown {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            #animation: pulse 2s infinite;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 380px) {
+            .qrcode-container {
+                width: 220px;
+                height: 220px;
+            }
+
+            .payment-amount {
+                font-size: 32px;
+            }
+
+            .login-status-bar {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* 二维码扫描线动画 */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff5000, transparent);
+            animation: scan 2s infinite linear;
+            box-shadow: 0 0 10px rgba(255, 80, 0, 0.5);
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* 支付平台标识 */
+        .payment-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            color: #ff5000;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .payment-logo::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #ff5000;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        /* 登录提示弹窗 */
+        .login-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 3000;
+            max-width: 90%;
+            width: 320px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .login-prompt.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .login-prompt h3 {
+            color: #ff5000;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .login-prompt p {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .login-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .login-btn, .cancel-login {
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .login-btn {
+            background: linear-gradient(90deg, #ff9000, #ff5000);
+            color: white;
+        }
+
+        .cancel-login {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 80, 0, 0.3);
+        }
+
+        .cancel-login:hover {
+            background: #e0e0e0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+<!-- 登录状态栏 -->
+<div class="login-status-bar" id="loginStatusBar">
+    <i class="fas fa-user"></i>
+    <span id="loginStatusText">未登录</span>
+    <a href="#" id="loginLink">登录</a>
+</div>
+
+<!-- 轮播图区域 -->
+<div class="swiper-container">
+    <div class="swiper-slide active">
+        <img src="./images/sku-13811216-01.png" alt="手写MyBatis">
+    </div>
+    <div class="swiper-slide">
+        <img src="./images/sku-13811216-02.png" alt="手写MyBatis">
+    </div>
+    <div class="swiper-slide">
+        <img src="./images/sku-13811216-03.png" alt="手写MyBatis">
+    </div>
+    <div class="swiper-indicators">
+        <div class="swiper-indicator active"></div>
+        <div class="swiper-indicator"></div>
+        <div class="swiper-indicator"></div>
+    </div>
+</div>
+
+<!-- 商品信息 -->
+<div class="product-info">
+    <h1 class="product-title">手写MyBatis：渐进式源码实践（全彩）</h1>
+    <div class="promotion-info">
+        <i class="fas fa-fire"></i>
+        <span>大促优惠 | 直降￥60，76人再抢，参与马上抢到</span>
+    </div>
+    <div class="author">小傅哥</div>
+</div>
+
+<!-- 拼单区域 -->
+<div class="group-buying">
+    <h2 class="section-title">拼单进行中</h2>
+    <div class="group-user">
+        <div class="user-avatar">傅</div>
+        <div class="user-info">
+            <div class="user-name">小傅哥</div>
+            <div class="group-status">拼单即将结束 <span class="countdown" id="countdown1">00:05:49</span></div>
+        </div>
+        <button class="group-btn">立即抢单</button>
+    </div>
+    <div class="group-user">
+        <div class="user-avatar">李</div>
+        <div class="user-info">
+            <div class="user-name">李二狗</div>
+            <div class="group-status">拼单即将结束 <span class="countdown" id="countdown2">00:05:49</span></div>
+        </div>
+        <button class="group-btn">立即抢单</button>
+    </div>
+</div>
+
+<!-- 价格区域 -->
+<div class="price-section">
+    <div class="price-info">
+        <div class="current-price">40</div>
+        <div class="original-price">100</div>
+    </div>
+    <div class="sold-count">已拼2563件</div>
+</div>
+
+<!-- 底部操作栏 -->
+<div class="action-bar">
+    <div class="action-btn">
+        <i class="fas fa-home"></i>
+        <span>首页</span>
+    </div>
+    <div class="action-btn">
+        <i class="fas fa-comment"></i>
+        <span>客服</span>
+    </div>
+    <div class="action-btn">
+        <i class="fas fa-star"></i>
+        <span>收藏</span>
+    </div>
+    <div class="action-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span>购物车</span>
+    </div>
+    <div class="buy-btn">
+        <div class="solo-buy" id="soloBuyBtn">单独购买</div>
+        <div class="group-buy" id="groupBuyBtn">开团购买</div>
+    </div>
+</div>
+
+<!-- 通知提示 -->
+<div class="notification" id="notification">即将跳转到支付页面...</div>
+
+<!-- 支付弹窗 -->
+<div class="payment-modal" id="paymentModal">
+    <div class="close-modal" id="closeModal">
+        <i class="fas fa-times"></i>
+    </div>
+    <div class="payment-card">
+        <div class="payment-header-section">
+            <div class="payment-title">请扫码支付</div>
+            <div class="product-name" id="productName">手写MyBatis：渐进式源码实践（全彩）</div>
+            <div class="payment-amount" id="paymentAmount">40</div>
+        </div>
+
+        <div class="qrcode-section">
+            <div class="qrcode-container pulse">
+                <img src="./images/sku-13811216-04.png" alt="支付二维码" class="qrcode-img">
+            </div>
+        </div>
+
+        <div class="payment-actions">
+            <button class="payment-btn cancel-btn" id="cancelButton">取消支付</button>
+            <button class="payment-btn confirm-btn" id="confirmButton">支付完成</button>
+        </div>
+    </div>
+</div>
+
+<!-- 登录提示弹窗 -->
+<div class="overlay" id="overlay"></div>
+<div class="login-prompt" id="loginPrompt">
+    <h3>需要登录</h3>
+    <p>您需要登录后才能进行购买操作，是否立即登录？</p>
+    <div class="login-actions">
+        <button class="login-btn" id="goToLoginBtn">去登录</button>
+        <button class="cancel-login" id="cancelLoginBtn">取消</button>
+    </div>
+</div>
+
+<!-- 底部安全区域 -->
+<div class="safe-area"></div>
+
+<script>
+    // 用户登录状态管理
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let username = localStorage.getItem('username') || '';
+
+    // 更新登录状态显示
+    function updateLoginStatus() {
+        const loginStatusBar = document.getElementById('loginStatusBar');
+        const loginStatusText = document.getElementById('loginStatusText');
+        const loginLink = document.getElementById('loginLink');
+
+        if (isLoggedIn) {
+            loginStatusText.textContent = `已登录：${username}`;
+            loginLink.textContent = '切换账号';
+        } else {
+            loginStatusText.textContent = '未登录';
+            loginLink.textContent = '登录';
+        }
+    }
+
+    // 模拟登录功能
+    function simulateLogin() {
+        isLoggedIn = true;
+        username = '用户' + Math.floor(Math.random() * 10000);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', username);
+        updateLoginStatus();
+
+        // 显示登录成功通知
+        showNotification('登录成功！欢迎 ' + username);
+    }
+
+    // 登出功能
+    function logout() {
+        isLoggedIn = false;
+        username = '';
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('username');
+        updateLoginStatus();
+    }
+
+    // 跳转到登录页
+    function redirectToLoginPage() {
+        // 保存当前页面URL以便登录后返回
+        localStorage.setItem('returnUrl', window.location.href);
+        // 跳转到登录页
+        window.location.href = 'login.html';
+    }
+
+    // 初始化登录状态
+    updateLoginStatus();
+
+    // 登录链接点击事件
+    document.getElementById('loginLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (isLoggedIn) {
+            logout();
+            showNotification('您已退出登录');
+        } else {
+            redirectToLoginPage();
+        }
+    });
+
+    // 显示登录提示弹窗
+    function showLoginPrompt() {
+        document.getElementById('overlay').classList.add('show');
+        document.getElementById('loginPrompt').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 隐藏登录提示弹窗
+    function hideLoginPrompt() {
+        document.getElementById('overlay').classList.remove('show');
+        document.getElementById('loginPrompt').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // 去登录按钮事件
+    document.getElementById('goToLoginBtn').addEventListener('click', function() {
+        hideLoginPrompt();
+        redirectToLoginPage();
+    });
+
+    // 取消登录按钮事件
+    document.getElementById('cancelLoginBtn').addEventListener('click', function() {
+        hideLoginPrompt();
+    });
+
+    // 显示通知
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // 轮播图功能
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.swiper-slide');
+    const indicators = document.querySelectorAll('.swiper-indicator');
+
+    function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+
+        slides[index].classList.add('active');
+        indicators[index].classList.add('active');
+
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        let nextIndex = (currentSlide + 1) % slides.length;
+        showSlide(nextIndex);
+    }
+
+    // 初始化轮播
+    showSlide(0);
+
+    // 自动轮播
+    setInterval(nextSlide, 3000);
+
+    // 点击指示器切换
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            showSlide(index);
+        });
+    });
+
+    // 倒计时功能
+    let timeLeft = 349; // 5分49秒 = 349秒
+
+    function updateCountdown() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        document.querySelectorAll('.countdown').forEach(el => {
+            el.textContent = `00:${formattedTime}`;
+        });
+
+        if (timeLeft > 0) {
+            timeLeft--;
+        } else {
+            document.querySelectorAll('.group-status').forEach(el => {
+                el.innerHTML = '拼单已结束 <span class="countdown">00:00:00</span>';
+            });
+            clearInterval(countdownInterval);
+        }
+    }
+
+    // 初始化倒计时
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+
+    // 支付弹窗相关功能
+    const paymentModal = document.getElementById('paymentModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelButton = document.getElementById('cancelButton');
+    const confirmButton = document.getElementById('confirmButton');
+    const soloBuyBtn = document.getElementById('soloBuyBtn');
+    const groupBuyBtn = document.getElementById('groupBuyBtn');
+    const notification = document.getElementById('notification');
+
+    // 显示支付弹窗
+    function showPaymentModal() {
+        paymentModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 关闭支付弹窗
+    function closePaymentModal() {
+        paymentModal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // 初始化支付信息
+    function updatePaymentInfo() {
+        const productName = document.querySelector('.product-title').textContent;
+        const amount = document.querySelector('.current-price').textContent;
+
+        document.getElementById('productName').textContent = productName;
+        document.getElementById('paymentAmount').textContent = amount;
+    }
+
+    // 购买按钮点击事件 - 检查登录状态
+    function handleBuyAction() {
+        if (!isLoggedIn) {
+            showLoginPrompt();
+            return false;
+        }
+        updatePaymentInfo();
+        showPaymentModal();
+        return true;
+    }
+
+    // 事件监听
+    soloBuyBtn.addEventListener('click', function() {
+        handleBuyAction();
+    });
+
+    groupBuyBtn.addEventListener('click', function() {
+        handleBuyAction();
+    });
+
+    closeModal.addEventListener('click', closePaymentModal);
+    cancelButton.addEventListener('click', closePaymentModal);
+
+    confirmButton.addEventListener('click', function() {
+        closePaymentModal();
+        showNotification('支付成功！感谢您的购买');
+    });
+
+    // 二维码动画效果
+    const qrContainer = document.querySelector('.qrcode-container');
+    setInterval(() => {
+        qrContainer.classList.toggle('pulse');
+    }, 4000);
+
+    // 点击遮罩层关闭登录提示
+    document.getElementById('overlay').addEventListener('click', hideLoginPrompt);
+
+    // 检查是否有登录后返回标志
+    if (localStorage.getItem('loginSuccess') === 'true') {
+        localStorage.removeItem('loginSuccess');
+        showNotification('登录成功！');
+        // 模拟登录状态
+        simulateLogin();
+    }
+</script>
+</body>
+</html>
