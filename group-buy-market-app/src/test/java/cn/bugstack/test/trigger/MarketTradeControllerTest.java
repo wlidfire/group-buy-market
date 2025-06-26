@@ -21,7 +21,7 @@ public class MarketTradeControllerTest {
     @Test
     public void test_lockMarketPayOrder() {
         LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO = new LockMarketPayOrderRequestDTO();
-        lockMarketPayOrderRequestDTO.setUserId("xfg01");
+        lockMarketPayOrderRequestDTO.setUserId("zpr01");
         lockMarketPayOrderRequestDTO.setTeamId(null);
         lockMarketPayOrderRequestDTO.setActivityId(100123L);
         lockMarketPayOrderRequestDTO.setGoodsId("9890001");
