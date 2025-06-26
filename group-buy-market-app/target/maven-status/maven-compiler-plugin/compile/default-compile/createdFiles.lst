@@ -1,0 +1,10 @@
+META-INF\spring-configuration-metadata.json
+cn\bugstack\config\RedisClientConfig$RedisCodec.class
+cn\bugstack\config\RedisClientConfigProperties.class
+cn\bugstack\config\ThreadPoolConfigProperties.class
+cn\bugstack\config\DCCValueBeanFactory.class
+cn\bugstack\config\OKHttpClientConfig.class
+cn\bugstack\config\RedisClientConfig.class
+cn\bugstack\config\ThreadPoolConfig.class
+cn\bugstack\config\GuavaConfig.class
+cn\bugstack\Application.class
