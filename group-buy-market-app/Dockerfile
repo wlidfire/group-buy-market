@@ -1,8 +1,8 @@
 # 基础镜像
-FROM openjdk:8-jre-slim
+FROM crpi-4wkevut9i07z8euo.cn-guangzhou.personal.cr.aliyuncs.com/orcalearn/openjdk:8-jre-slim
 
 # 作者
-MAINTAINER xiaofuge
+MAINTAINER zephyrix
 
 # 配置
 ENV PARAMS=""
